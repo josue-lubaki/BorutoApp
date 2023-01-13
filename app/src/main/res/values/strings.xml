@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BorutoApp</string>
     <string name="app_logo">App logo</string>
+    <string name="onBoarding_image">onBoarding image</string>
 </resources>
