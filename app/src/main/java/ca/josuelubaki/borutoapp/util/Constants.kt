@@ -8,7 +8,7 @@ object Constants {
 
     const val HEROES_DATABASE_TABLE = "heroes_table"
     const val BORUTO_DATABASE = "boruto_database"
-    const val HEROES_REMOTE_KEY_DATABASE_TABLE = "heroes_remote_key_table"
+    const val HEROES_REMOTE_KEYS_DATABASE_TABLE = "heroes_remote_keys_table"
 
     const val PREFERENCES_NAME = "boruto_preferences"
     const val PREFERENCES_KEY = "on_boarding_completed"
