@@ -1,6 +1,5 @@
 package ca.josuelubaki.borutoapp.presentation.screens.welcome
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,15 +17,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import ca.josuelubaki.borutoapp.R
 import ca.josuelubaki.borutoapp.domain.model.OnBoardingPage
+import ca.josuelubaki.borutoapp.navigation.Screen
 import ca.josuelubaki.borutoapp.ui.theme.*
 import com.google.accompanist.pager.*
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WelcomeScreen(navController : NavHostController?) {
+fun WelcomeScreen(
+    navController : NavHostController?,
+    welcomeViewModel : WelcomeViewModel = hiltViewModel()
+) {
     val pages = listOf(
         OnBoardingPage.First,
         OnBoardingPage.Second,
@@ -64,7 +68,9 @@ fun WelcomeScreen(navController : NavHostController?) {
             modifier = Modifier.weight(1f),
             pagerState = pagerState
         ){
-
+            navController?.popBackStack()
+            navController?.navigate(Screen.Home.route)
+            welcomeViewModel.saveOnBoardingState(completed = true)
         }
     }
 }
