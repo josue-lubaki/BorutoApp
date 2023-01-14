@@ -1,8 +1,12 @@
 package ca.josuelubaki.borutoapp.di
 
 import android.content.Context
-import ca.josuelubaki.borutoapp.data.pref.DataStoreOperationsImpl
+import ca.josuelubaki.borutoapp.data.repository.DataStoreOperationsImpl
+import ca.josuelubaki.borutoapp.data.repository.Repository
 import ca.josuelubaki.borutoapp.domain.repository.DataStoreOperations
+import ca.josuelubaki.borutoapp.domain.use_case.UseCases
+import ca.josuelubaki.borutoapp.domain.use_case.read_onboarding.ReadOnBoardingUseCase
+import ca.josuelubaki.borutoapp.domain.use_case.save_onboarding.SaveOnBoardingUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +22,14 @@ object RepositoryModule {
     @Singleton
     fun provideDataStoreOperations(@ApplicationContext context : Context) : DataStoreOperations {
         return DataStoreOperationsImpl(context = context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUseCases(repository: Repository) : UseCases {
+        return UseCases(
+            readOnBoardingUseCase = ReadOnBoardingUseCase(repository),
+            saveOnBoardingUseCase = SaveOnBoardingUseCase(repository)
+        )
     }
 }
