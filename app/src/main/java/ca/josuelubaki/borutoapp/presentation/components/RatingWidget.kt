@@ -1,9 +1,11 @@
 package ca.josuelubaki.borutoapp.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -14,6 +16,7 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ca.josuelubaki.borutoapp.R
 import ca.josuelubaki.borutoapp.ui.theme.LightGray
@@ -23,8 +26,11 @@ import ca.josuelubaki.borutoapp.ui.theme.StarColor
 fun RatingWidget(
     modifier : Modifier,
     rating : Double,
-    scaleFactor: Float = 3f
+    scaleFactor: Float = 3f,
+    spaceBetween : Dp = 0.dp,
 ) {
+
+    val result = calculateStars(rating)
 
     val starPathString = stringResource(id = R.string.star_path)
     val starPath = remember {
@@ -35,17 +41,40 @@ fun RatingWidget(
         starPath.getBounds()
     }
 
-    FilledStar(
-        starPath = starPath,
-        starPathBounds = starPathBounds,
-        scaleFactor = scaleFactor,
-    )
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(spaceBetween)
+    ) {
+        result["filledStars"]?.let {
+            repeat(it) {
+                FilledStar(
+                    starPath = starPath,
+                    starPathBounds = starPathBounds,
+                    scaleFactor = scaleFactor
+                )
+            }
+        }
 
-    HalfFilledStar(
-        starPath = starPath,
-        starPathBounds = starPathBounds,
-        scaleFactor = scaleFactor,
-    )
+        result["halfFilledStars"]?.let {
+            repeat(it) {
+                HalfFilledStar(
+                    starPath = starPath,
+                    starPathBounds = starPathBounds,
+                    scaleFactor = scaleFactor
+                )
+            }
+        }
+
+        result["emptyStars"]?.let {
+            repeat(it) {
+                EmptyStar(
+                    starPath = starPath,
+                    starPathBounds = starPathBounds,
+                    scaleFactor = scaleFactor
+                )
+            }
+        }
+    }
 
 }
 
@@ -56,7 +85,7 @@ fun FilledStar(
     scaleFactor: Float,
 ) {
     Canvas(modifier = Modifier.size(24.dp)){
-        val canvasSize = this.size
+        val canvasSize = size
 
         scale(scale = scaleFactor){
             val pathWidth = starPathBounds.width
@@ -84,7 +113,7 @@ fun HalfFilledStar(
     scaleFactor: Float,
 ) {
     Canvas(modifier = Modifier.size(24.dp)){
-        val canvasSize = this.size
+        val canvasSize = size
 
         scale(scale = scaleFactor){
             val pathWidth = starPathBounds.width
@@ -112,6 +141,73 @@ fun HalfFilledStar(
             }
         }
     }
+}
+
+@Composable
+fun EmptyStar(
+    starPath : Path,
+    starPathBounds : Rect,
+    scaleFactor: Float,
+) {
+    Canvas(modifier = Modifier.size(24.dp)){
+        val canvasSize = size
+
+        scale(scale = scaleFactor){
+            val pathWidth = starPathBounds.width
+            val pathHeight = starPathBounds.height
+            val left = (canvasSize.width / 2f) - (pathWidth / 1.7f)
+            val top = (canvasSize.height / 2f) - (pathHeight / 1.7f)
+
+            translate(
+                left = left,
+                top = top
+            ){
+                drawPath(
+                    path = starPath,
+                    color = LightGray.copy(alpha = 0.5f),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun calculateStars(rating: Double) : Map<String, Int> {
+    val maxStars by remember { mutableStateOf(5) }
+    var filledStars by remember { mutableStateOf(0) }
+    var halfFilledStars by remember { mutableStateOf(0) }
+    var emptyStars by remember { mutableStateOf(0) }
+
+    LaunchedEffect(key1 = rating){
+        val (whole, decimal) = rating.toString()
+            .split(".")
+            .map { it.toInt() }
+
+        if(whole in 0..5 && decimal in 0..9){
+            filledStars = whole
+            if(decimal in 1..5){
+                halfFilledStars++
+            }
+            if(decimal in 6..9){
+                filledStars++
+            }
+            if(whole == maxStars && decimal > 0) {
+                emptyStars = maxStars
+                halfFilledStars = 0
+                filledStars = 0
+            }
+        } else {
+            Log.d("RatingWidget", "Rating is not valid")
+        }
+    }
+
+    emptyStars = maxStars - (filledStars + halfFilledStars)
+
+    return mapOf(
+        "filledStars" to filledStars,
+        "halfFilledStars" to halfFilledStars,
+        "emptyStars" to emptyStars
+    )
 }
 
 @Preview(showBackground = true)
@@ -146,6 +242,25 @@ fun HalfFilledStarPreview() {
     }
 
     HalfFilledStar(
+        starPath = starPath,
+        starPathBounds = starPathBounds,
+        scaleFactor = 3f,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmptyStarPreview() {
+    val starPathString = stringResource(id = R.string.star_path)
+    val starPath = remember {
+        PathParser().parsePathString(pathData = starPathString).toPath()
+    }
+
+    val starPathBounds = remember {
+        starPath.getBounds()
+    }
+
+    EmptyStar(
         starPath = starPath,
         starPathBounds = starPathBounds,
         scaleFactor = 3f,
