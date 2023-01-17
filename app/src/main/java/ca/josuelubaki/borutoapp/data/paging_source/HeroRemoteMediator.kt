@@ -42,7 +42,7 @@ class HeroRemoteMediator @Inject constructor(
             }
     }
 
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, Hero>): RemoteMediator.MediatorResult {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, Hero>): MediatorResult {
         try {
             val page = when(loadType) {
                 LoadType.REFRESH -> {
@@ -82,7 +82,7 @@ class HeroRemoteMediator @Inject constructor(
             }
             return MediatorResult.Success(endOfPaginationReached = response.nextPage == null)
         } catch (e: Exception) {
-            return RemoteMediator.MediatorResult.Error(e)
+            return MediatorResult.Error(e)
         }
     }
 
