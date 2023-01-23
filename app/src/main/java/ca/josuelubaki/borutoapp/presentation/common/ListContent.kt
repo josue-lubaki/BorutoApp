@@ -1,16 +1,20 @@
 package ca.josuelubaki.borutoapp.presentation.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -30,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import ca.josuelubaki.borutoapp.R
 import ca.josuelubaki.borutoapp.domain.model.Hero
 import ca.josuelubaki.borutoapp.navigation.Screen
@@ -38,7 +43,6 @@ import ca.josuelubaki.borutoapp.ui.theme.HERO_ITEM_HEIGHT
 import ca.josuelubaki.borutoapp.ui.theme.LARGE_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.MEDIUM_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.SMALL_PADDING
-import ca.josuelubaki.borutoapp.ui.theme.Shapes
 import ca.josuelubaki.borutoapp.ui.theme.topAppBarContentColor
 import ca.josuelubaki.borutoapp.util.Constants.BASE_URL
 import coil.compose.rememberAsyncImagePainter
@@ -48,7 +52,23 @@ fun ListContent(
     heroes: LazyPagingItems<Hero>,
     navController: NavHostController
 ) {
+    LazyColumn(
+        contentPadding = PaddingValues(all = SMALL_PADDING),
+        verticalArrangement = Arrangement.spacedBy(MEDIUM_PADDING)
+    ){
+        items(
+            items = heroes,
+            key = { hero -> hero.id }
+        ){hero ->
+            hero?.let{
+                HeroItem(
+                    hero = it,
+                    navController = navController
+                )
+            }
 
+        }
+    }
 }
 
 @Composable
@@ -65,11 +85,11 @@ fun HeroItem(
     Box(modifier = Modifier
         .height(HERO_ITEM_HEIGHT)
         .clickable {
-            navController?.navigate(Screen.Details.passHeroId(heroId = hero.id))
+            navController.navigate(Screen.Details.passHeroId(heroId = hero.id))
         },
         contentAlignment = Alignment.BottomStart
     ) {
-        Surface(shape = Shapes.large) {
+        Surface(shape = RoundedCornerShape(size = LARGE_PADDING)) {
             Image(
                 modifier = Modifier.fillMaxSize(),
                 painter = painter,
