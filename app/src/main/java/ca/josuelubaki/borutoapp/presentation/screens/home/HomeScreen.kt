@@ -1,19 +1,18 @@
 package ca.josuelubaki.borutoapp.presentation.screens.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import android.annotation.SuppressLint
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import ca.josuelubaki.borutoapp.presentation.components.RatingWidget
-import ca.josuelubaki.borutoapp.ui.theme.LARGE_PADDING
+import ca.josuelubaki.borutoapp.presentation.common.ListContent
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
 
@@ -23,12 +22,11 @@ fun HomeScreen(
         topBar = {
             HomeTopBar(onSearchClicked = {})
         },
-    ){
-        Box(modifier = Modifier.padding(it)){
-            RatingWidget(
-                modifier = Modifier.padding(LARGE_PADDING),
-                rating = 3.7
+        content = {
+            ListContent(
+                heroes = allHeroes,
+                navController = navController
             )
         }
-    }
+    )
 }
