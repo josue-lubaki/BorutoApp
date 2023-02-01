@@ -83,11 +83,6 @@ Run the app (Run > Run 'app')
 
   <img src="https://i.imgur.com/ILr0iMq.png" width="720" height="300" />
   
-  credits :
-
-* [Medium Article](https://medium.com/android-dev-hacks/detailed-guide-on-android-clean-architecture-9eab262a9011)
-* [Course on Udemy](https://www.udemy.com/course/android-architecture-componentsmvvm-with-dagger-retrofit/)
-
 ## License
 [MIT License](https://github.com/josue-lubaki/BorutoApp/blob/main/licence)
 
