@@ -23,12 +23,12 @@ Android app for Boruto: Naruto Next Generations anime. It's a simple app that sh
 
 <table border="1">
     <tr>
-        <td> DARK MODE </td>
-        <td> LIGHT MODE </td>
+        <th align="center"> DARK MODE </th>
+        <th align="center"> LIGHT MODE </th>
     </tr>
     <tr>
-        <th align="center"> OnBoarding Page </th>   
-        <th align="center"> OnBoarding Page </th>
+        <td align="center"> OnBoarding Page </td>   
+        <td align="center"> OnBoarding Page </td>
     </tr>
     <tr>
         <td align="center"> <img src="https://i.imgur.com/DSqel2q.png" width=360 height=760 /></td>
@@ -55,7 +55,7 @@ Android app for Boruto: Naruto Next Generations anime. It's a simple app that sh
 git clone https://github.com/josue-lubaki/BorutoApp.git
 ```
 
-2. Install the app
+2. Run the app
 
 ```bash
 Run the app (Run > Run 'app')
@@ -80,7 +80,7 @@ Run the app (Run > Run 'app')
 
 ## Architecture
 - Clean Architecture
-  <img src="https://i.imgur.com/v5EiM83.jpg" width="500">
+  <img src="https://i.imgur.com/ILr0iMq.png" width="500">
   credits :
 
 * [Medium Article](https://medium.com/android-dev-hacks/detailed-guide-on-android-clean-architecture-9eab262a9011)
