@@ -80,7 +80,9 @@ Run the app (Run > Run 'app')
 
 ## Architecture
 - Clean Architecture
-  <img src="https://i.imgur.com/ILr0iMq.png" width="500">
+
+  <img src="https://i.imgur.com/ILr0iMq.png" width="720" height="300" />
+  
   credits :
 
 * [Medium Article](https://medium.com/android-dev-hacks/detailed-guide-on-android-clean-architecture-9eab262a9011)
