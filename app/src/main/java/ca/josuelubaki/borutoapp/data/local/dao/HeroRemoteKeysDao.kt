@@ -10,7 +10,7 @@ import ca.josuelubaki.borutoapp.domain.model.HeroRemoteKeys
 interface HeroRemoteKeysDao {
 
     @Query("SELECT * FROM heroes_remote_keys_table WHERE id = :heroId")
-    suspend fun getRemoteKeysById(heroId : Int) : HeroRemoteKeys
+    suspend fun getRemoteKeysById(heroId : Int) : HeroRemoteKeys?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRemoteKeys(remoteKeys : List<HeroRemoteKeys>)

@@ -9,6 +9,9 @@ import ca.josuelubaki.borutoapp.data.local.BorutoDatabase
 import ca.josuelubaki.borutoapp.data.remote.BorutoApi
 import ca.josuelubaki.borutoapp.domain.model.Hero
 import ca.josuelubaki.borutoapp.domain.model.HeroRemoteKeys
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -19,6 +22,20 @@ class HeroRemoteMediator @Inject constructor(
 
     private val heroDao = borutoDatabase.heroDao()
     private val heroRemoteKeysDao = borutoDatabase.heroRemoteKeysDao()
+
+    override suspend fun initialize(): InitializeAction {
+        val currentTime = System.currentTimeMillis()
+        val lastUpdated = heroRemoteKeysDao.getRemoteKeysById(heroId = 1)?.lastUpdated ?: 0
+        val cacheTimeout = 1440 // 24 hours
+
+        val cachedExpired = (currentTime - lastUpdated) > (cacheTimeout * 60 * 1000)
+
+        return if (cachedExpired) {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        } else {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        }
+    }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, Hero>): HeroRemoteKeys? {
         return state.anchorPosition?.let { position ->
@@ -73,7 +90,8 @@ class HeroRemoteMediator @Inject constructor(
                         HeroRemoteKeys(
                             id = hero.id,
                             prevPage = prevKey,
-                            nextPage = nextKey
+                            nextPage = nextKey,
+                            lastUpdated = response.lastUpdated
                         )
                     }
                     heroRemoteKeysDao.insertRemoteKeys(remoteKeys = keys)
@@ -85,5 +103,11 @@ class HeroRemoteMediator @Inject constructor(
             return MediatorResult.Error(e)
         }
     }
+
+//    private fun parseMillis(millis : Long) : String {
+//        val date = Date(millis)
+//        val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ROOT)
+//        return format.format(date)
+//    }
 
 }
