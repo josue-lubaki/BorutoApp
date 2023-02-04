@@ -37,10 +37,15 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 @Composable
-fun EmptyScreen(error : LoadState.Error) {
-    val message by remember { mutableStateOf(parseErrorMessage(error)) }
+fun EmptyScreen(error : LoadState.Error? = null) {
+    var message by remember { mutableStateOf("Find your Favorite Hero !") }
 
-    val icon by remember { mutableStateOf(R.drawable.ic_network_error) }
+    var icon by remember { mutableStateOf(R.drawable.ic_search_document) }
+
+    if(error != null) {
+        message = parseErrorMessage(error = error)
+        icon = R.drawable.ic_network_error
+    }
 
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnimation by animateFloatAsState(
@@ -98,19 +103,11 @@ fun parseErrorMessage(error : LoadState.Error) : String {
 @Preview(showBackground = true)
 @Composable
 fun EmptyScreenPreview() {
-    EmptyContent(
-        alphaAnimation = ContentAlpha.disabled,
-        icon = R.drawable.ic_network_error,
-        message = "Server Unavailable"
-    )
+    EmptyScreen()
 }
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun EmptyScreenDarkPreview() {
-    EmptyContent(
-        alphaAnimation = ContentAlpha.disabled,
-        icon = R.drawable.ic_network_error,
-        message = "internet Unavailable"
-    )
+    EmptyScreen( LoadState.Error(ConnectException()) )
 }
