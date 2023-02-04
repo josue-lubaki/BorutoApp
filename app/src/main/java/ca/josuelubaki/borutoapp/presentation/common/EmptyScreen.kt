@@ -6,19 +6,28 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,15 +38,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import ca.josuelubaki.borutoapp.R
+import ca.josuelubaki.borutoapp.domain.model.Hero
 import ca.josuelubaki.borutoapp.ui.theme.NETWORK_ERROR_ICON_HEIGHT
 import ca.josuelubaki.borutoapp.ui.theme.SMALL_PADDING
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 @Composable
-fun EmptyScreen(error : LoadState.Error? = null) {
+fun EmptyScreen(
+    error : LoadState.Error? = null,
+    heroes : LazyPagingItems<Hero>? = null
+) {
     var message by remember { mutableStateOf("Find your Favorite Hero !") }
 
     var icon by remember { mutableStateOf(R.drawable.ic_search_document) }
@@ -60,35 +78,72 @@ fun EmptyScreen(error : LoadState.Error? = null) {
         startAnimation = true
     }
 
-    EmptyContent(alphaAnimation, icon, message)
+    EmptyContent(
+        alphaAnimation = alphaAnimation,
+        icon = icon,
+        message = message,
+        heroes = heroes,
+        error = error
+    )
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EmptyContent(alphaAnimation : Float, icon : Int, message : String) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+fun EmptyContent(
+    alphaAnimation : Float,
+    icon : Int, message :
+    String,heroes :
+    LazyPagingItems<Hero>? = null,
+    error : LoadState.Error? = null,
+) {
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    val state = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            heroes?.refresh()
+            isRefreshing = false
+        },
+    )
+
+    Box(
+        modifier = Modifier
+            .pullRefresh(
+                state = state,
+                enabled = error != null
+            )
     ){
-        Icon(
+        PullRefreshIndicator(isRefreshing, state, Modifier.align(Alignment.TopCenter))
+        Column(
             modifier = Modifier
-                .alpha(alphaAnimation)
-                .size(NETWORK_ERROR_ICON_HEIGHT),
-            painter = painterResource(id = icon),
-            contentDescription = stringResource(R.string.network_error_icon),
-            tint = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
-        )
-        Text(
-            modifier = Modifier
-                .alpha(alphaAnimation)
-                .padding(top = SMALL_PADDING),
-            text = message,
-            color = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
-            fontSize = MaterialTheme.typography.subtitle1.fontSize,
-            fontWeight = FontWeight.Medium,
-            textAlign= TextAlign.Center,
-        )
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+            ,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Icon(
+                modifier = Modifier
+                    .alpha(alphaAnimation)
+                    .size(NETWORK_ERROR_ICON_HEIGHT),
+                painter = painterResource(id = icon),
+                contentDescription = stringResource(R.string.network_error_icon),
+                tint = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
+            )
+            Text(
+                modifier = Modifier
+                    .alpha(alphaAnimation)
+                    .padding(top = SMALL_PADDING),
+                text = message,
+                color = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
+                fontSize = MaterialTheme.typography.subtitle1.fontSize,
+                fontWeight = FontWeight.Medium,
+                textAlign= TextAlign.Center,
+            )
+        }
+
     }
 }
 
