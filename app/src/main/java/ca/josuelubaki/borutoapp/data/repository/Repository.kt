@@ -13,6 +13,8 @@ class Repository @Inject constructor(
 ){
     fun getAllHeroes() : Flow<PagingData<Hero>> = remote.getAllHeroes()
 
+    fun searchHeroes(name : String) : Flow<PagingData<Hero>> = remote.searchHeroes(name)
+
     suspend fun onSaveBoardingState(completed : Boolean){
         dataStore.saveOnBoardingState(completed)
     }
