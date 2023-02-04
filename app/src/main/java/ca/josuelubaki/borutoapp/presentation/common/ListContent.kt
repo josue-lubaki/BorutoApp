@@ -1,6 +1,7 @@
 package ca.josuelubaki.borutoapp.presentation.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -89,14 +90,21 @@ fun handlePagingResult(
         }
 
         return when {
-            loadState.refresh is LoadState.Loading -> {
-                ShimmerEffect()
-                false
-            }
             error != null -> {
                 EmptyScreen(error = error)
                 false
             }
+
+            heroes.itemCount < 1 -> {
+                EmptyScreen()
+                false
+            }
+            
+            loadState.refresh is LoadState.Loading -> {
+                ShimmerEffect()
+                false
+            }
+
             else -> true
         }
     }

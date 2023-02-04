@@ -79,7 +79,9 @@ private fun SearchWidget(
             leadingIcon = {
                 IconButton(
                     modifier = Modifier.alpha(ContentAlpha.medium),
-                    onClick = {}
+                    onClick = {
+                        onSearchClicked(text)
+                    }
                 )  {
                     Icon(
                         imageVector = Icons.Default.Search,
