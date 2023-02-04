@@ -8,6 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.collectAsLazyPagingItems
+import ca.josuelubaki.borutoapp.presentation.common.ListContent
+import ca.josuelubaki.borutoapp.ui.theme.SMALL_PADDING
 
 @Composable
 fun SearchScreen(
@@ -16,12 +19,15 @@ fun SearchScreen(
 ) {
 
     val searchQuery by searchViewModel.searchQuery
+    val heroes = searchViewModel.searchHeroes.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = { SearchTopBar(
             text = searchQuery,
             onTextChange = { searchViewModel.updateSearchQuery(query = it) },
-            onSearchClicked = {},
+            onSearchClicked = {
+                searchViewModel.searchHeroes(query = searchQuery)
+            },
             onCloseClicked = {
                 navController.popBackStack()
             }
