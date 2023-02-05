@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ca.josuelubaki.borutoapp.presentation.details.DetailsScreen
+import ca.josuelubaki.borutoapp.presentation.screens.details.DetailsScreen
 import ca.josuelubaki.borutoapp.presentation.screens.home.HomeScreen
 import ca.josuelubaki.borutoapp.presentation.screens.search.SearchScreen
 import ca.josuelubaki.borutoapp.presentation.screens.splash.SplashScreen
@@ -31,11 +31,8 @@ fun SetupNavGraph(navController : NavHostController) {
         composable(
             route = Screen.Details.route,
             arguments = listOf(navArgument(DETAILS_ARGUMENT_KEY) { type = NavType.IntType })
-        ) { backStackEntry ->
-            val heroId = backStackEntry.arguments?.getInt(DETAILS_ARGUMENT_KEY)
-            heroId?.let {
-                DetailsScreen(navController = navController, heroId = it)
-            }
+        ) {
+            DetailsScreen(navController = navController)
         }
         composable(Screen.Search.route){
             SearchScreen(navController = navController)
