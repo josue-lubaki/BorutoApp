@@ -1,6 +1,7 @@
 package ca.josuelubaki.borutoapp.presentation.screens.details
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Color.parseColor
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -31,7 +32,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -41,7 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ca.josuelubaki.borutoapp.R
@@ -60,13 +64,30 @@ import ca.josuelubaki.borutoapp.util.Constants.ABOUT_TEXT_MAX_LINES
 import ca.josuelubaki.borutoapp.util.Constants.BASE_URL
 import ca.josuelubaki.borutoapp.util.Constants.MIN_BACKGROUND_IMAGE_HEIGHT
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DetailsContent(
     navController : NavHostController,
-    selectedHero: Hero?
+    selectedHero: Hero?,
+    colors : Map<String, String>
 ) {
+
+    var vibrant by remember { mutableStateOf("#000000") }
+    var darkVibrant by remember { mutableStateOf("#000000") }
+    var onDarkVirant by remember { mutableStateOf("#FFFFFF") }
+
+    LaunchedEffect(key1 = selectedHero){
+        vibrant = colors["vibrant"]!!
+        darkVibrant = colors["darkVibrant"]!!
+        onDarkVirant = colors["onDarkVibrant"]!!
+    }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        color = Color(parseColor(darkVibrant))
+    )
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
@@ -93,13 +114,21 @@ fun DetailsContent(
         scaffoldState = scaffoldState,
         sheetPeekHeight = MIN_SHEET_HEIGHT,
         sheetContent = {
-            selectedHero?.let { BottomSheetContent(selectedHero = it) }
+            selectedHero?.let {
+                BottomSheetContent(
+                    selectedHero = it,
+                    infoBoxIconColor = Color(parseColor(vibrant)),
+                    sheetBackgroundColor = Color(parseColor(darkVibrant)),
+                    contentColor = Color(parseColor(onDarkVirant))
+                )
+            }
         }
     ) {
         selectedHero?.let { hero ->
             BackgroundContent(
                 heroImage = hero.image,
                 imageFraction = currentSheetFraction,
+                backgroundColor = Color(parseColor(darkVibrant)),
                 onCloseClicked = {
                     navController.popBackStack()
                 },
@@ -285,7 +314,7 @@ fun BottomSheetScaffoldState.getCurrentSheetFraction() : Float {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun DetailsContentPreview() {
     DetailsContent(
@@ -315,6 +344,11 @@ fun DetailsContentPreview() {
                 "Wind",
                 "Water"
             )
+        ),
+        colors = mapOf(
+            "Lightning" to Color(0xFFE6E600).toString(),
+            "Wind" to Color(0xFF00E5E6).toString(),
+            "Water" to Color(0xFF00B0FF).toString(),
         )
     )
 }
@@ -349,6 +383,11 @@ fun DetailsContentDarkPreview() {
                 "Wind",
                 "Water"
             )
+        ),
+        colors = mapOf(
+            "vibrant" to Color(0xFF424242).toString(),
+            "darkVibrant" to Color(0xFF424242).toString(),
+            "onDarkVibrant" to Color(0xFFE0E0E0).toString(),
         )
     )
 }

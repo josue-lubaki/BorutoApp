@@ -2,6 +2,7 @@ package ca.josuelubaki.borutoapp.presentation.screens.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,6 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import ca.josuelubaki.borutoapp.presentation.common.ListContent
+import ca.josuelubaki.borutoapp.ui.theme.statusBarColor
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun SearchScreen(
@@ -19,6 +22,11 @@ fun SearchScreen(
 
     val searchQuery by searchViewModel.searchQuery
     val heroes = searchViewModel.searchHeroes.collectAsLazyPagingItems()
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        color = MaterialTheme.colors.statusBarColor,
+    )
 
     Scaffold(
         topBar = { SearchTopBar(
