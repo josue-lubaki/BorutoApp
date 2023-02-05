@@ -2,6 +2,7 @@ package ca.josuelubaki.borutoapp.presentation.screens.details
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetValue.Collapsed
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -38,12 +41,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ca.josuelubaki.borutoapp.R
 import ca.josuelubaki.borutoapp.domain.model.Hero
 import ca.josuelubaki.borutoapp.presentation.components.InfoBox
 import ca.josuelubaki.borutoapp.presentation.components.OrderedList
+import ca.josuelubaki.borutoapp.ui.theme.EXPANDED_RADIUS_LEVEL
+import ca.josuelubaki.borutoapp.ui.theme.EXTRA_LARGE_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.INFO_ICON_SIZE
 import ca.josuelubaki.borutoapp.ui.theme.LARGE_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.MEDIUM_PADDING
@@ -74,7 +80,16 @@ fun DetailsContent(
 
     val currentSheetFraction = scaffoldState.getCurrentSheetFraction()
 
+    val radiusAnim by animateDpAsState(
+        targetValue =
+            if(currentSheetFraction == 1f)
+                EXTRA_LARGE_PADDING
+            else
+                EXPANDED_RADIUS_LEVEL
+    )
+
     BottomSheetScaffold(
+        sheetShape = RoundedCornerShape(topStart = radiusAnim, topEnd = radiusAnim),
         scaffoldState = scaffoldState,
         sheetPeekHeight = MIN_SHEET_HEIGHT,
         sheetContent = {
