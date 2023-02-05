@@ -33,7 +33,9 @@ fun SetupNavGraph(navController : NavHostController) {
             arguments = listOf(navArgument(DETAILS_ARGUMENT_KEY) { type = NavType.IntType })
         ) { backStackEntry ->
             val heroId = backStackEntry.arguments?.getInt(DETAILS_ARGUMENT_KEY)
-            DetailsScreen(navController = navController)
+            heroId?.let {
+                DetailsScreen(navController = navController, heroId = it)
+            }
         }
         composable(Screen.Search.route){
             SearchScreen(navController = navController)
