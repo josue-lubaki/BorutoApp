@@ -149,6 +149,7 @@ fun BottomSheetContent(
     Column(
         modifier = Modifier
             .background(color = sheetBackgroundColor)
+            .fillMaxHeight(0.6f)
             .padding(all = LARGE_PADDING)
     ){
         Row(
