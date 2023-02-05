@@ -3,27 +3,37 @@ package ca.josuelubaki.borutoapp.presentation.screens.details
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.BottomSheetValue.Collapsed
+import androidx.compose.material.BottomSheetValue.Expanded
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,9 +48,12 @@ import ca.josuelubaki.borutoapp.ui.theme.INFO_ICON_SIZE
 import ca.josuelubaki.borutoapp.ui.theme.LARGE_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.MEDIUM_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.MIN_SHEET_HEIGHT
+import ca.josuelubaki.borutoapp.ui.theme.SMALL_PADDING
 import ca.josuelubaki.borutoapp.ui.theme.titleColor
 import ca.josuelubaki.borutoapp.util.Constants.ABOUT_TEXT_MAX_LINES
-import coil.compose.AsyncImagePainter.State.Empty.painter
+import ca.josuelubaki.borutoapp.util.Constants.BASE_URL
+import ca.josuelubaki.borutoapp.util.Constants.MIN_BACKGROUND_IMAGE_HEIGHT
+import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -50,14 +63,16 @@ fun DetailsContent(
 ) {
 
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(
-            initialValue = BottomSheetValue.Expanded,
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = Expanded,
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
+                dampingRatio = Spring.DampingRatioNoBouncy,
                 stiffness = Spring.StiffnessLow,
             )
         )
     )
+
+    val currentSheetFraction = scaffoldState.getCurrentSheetFraction()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -66,7 +81,15 @@ fun DetailsContent(
             selectedHero?.let { BottomSheetContent(selectedHero = it) }
         }
     ) {
-
+        selectedHero?.let { hero ->
+            BackgroundContent(
+                heroImage = hero.image,
+                imageFraction = currentSheetFraction,
+                onCloseClicked = {
+                    navController.popBackStack()
+                },
+            )
+        }
     }
 
 }
@@ -181,10 +204,73 @@ fun BottomSheetContent(
             )
         }
     }
-
 }
 
-@Preview(showBackground = true)
+@Composable
+fun BackgroundContent(
+    heroImage : String,
+    imageFraction : Float = 1f,
+    backgroundColor : Color = MaterialTheme.colors.surface,
+    onCloseClicked : () -> Unit = {}
+) {
+
+    val imageURL = "$BASE_URL$heroImage"
+    val painter = rememberAsyncImagePainter(
+        model = imageURL,
+        placeholder = painterResource(id = R.drawable.ic_placeholder),
+        error = painterResource(id = R.drawable.ic_placeholder)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = backgroundColor)
+    ){
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction = imageFraction + MIN_BACKGROUND_IMAGE_HEIGHT)
+                .align(Alignment.TopStart),
+            painter = painter,
+            contentDescription = stringResource(id = R.string.hero_image),
+            contentScale = ContentScale.Crop,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ){
+            IconButton(
+                modifier = Modifier.padding(all = SMALL_PADDING),
+                onClick = { onCloseClicked() }
+            ){
+                Icon(
+                    modifier = Modifier.size(INFO_ICON_SIZE),
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(id = R.string.close_icon),
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+fun BottomSheetScaffoldState.getCurrentSheetFraction() : Float {
+    val fraction = bottomSheetState.progress.fraction
+    val currentValue = bottomSheetState.currentValue
+    val targetValue = bottomSheetState.targetValue
+
+    return when {
+        currentValue == Collapsed && targetValue == Collapsed -> 1f
+        currentValue == Expanded && targetValue == Expanded -> 0f
+        currentValue == Collapsed && targetValue == Expanded -> 1f - fraction
+        currentValue == Expanded && targetValue == Collapsed -> fraction
+        else -> fraction
+    }
+}
+
+@Preview
 @Composable
 fun DetailsContentPreview() {
     DetailsContent(
@@ -218,7 +304,7 @@ fun DetailsContentPreview() {
     )
 }
 
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun DetailsContentDarkPreview() {
     DetailsContent(
