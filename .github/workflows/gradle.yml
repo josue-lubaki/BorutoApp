@@ -46,9 +46,6 @@ jobs:
      runs-on: ubuntu-latest
      needs: build
      
-     steps: 
-      - name : Give Permission
-        run: chmod +x ./gradlew
-        
+     steps:        
       - name: Test with Gradle
         run: ./gradlew test
