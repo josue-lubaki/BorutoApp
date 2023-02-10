@@ -8,17 +8,25 @@ Android app for Boruto: Naruto Next Generations anime. It's a simple app that sh
 ## Features
 - List of heroes
 - Hero details
+- details Hero
 
-## Demo - Introduction
-[![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/8eb0e10c-8b40-49bd-b6c4-1cb6e84194d2.gif?ClientID=vimeo-core-prod&Date=1675233373&Signature=4c66e31a67a47b9dd6766ab53ca785d3324bc961)](https://player.vimeo.com/video/794761825)
+## Demo - Click to watch the [full video](https://youtu.be/I0_At4PTPEQ)
 
-## Demo - Dark Mode
+[![Watch the video](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/d7b49d74-6517-404c-ac94-53143355e5cf.gif?ClientID=vimeo-core-prod&Date=1675996621&Signature=45770c61516e109d576ec493fc93ae71be83d3d3)](https://youtu.be/I0_At4PTPEQ)
+
+## List of Heroes
+
+[![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/d6ba00b4-8568-45bc-af72-52b96f581c95.gif?ClientID=vimeo-core-prod&Date=1675233322&Signature=a6aa1601e3bad43b28f5752c2bb8dbe7160dd019)](https://player.vimeo.com/video/794761764)
+
+<!-- [![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/8eb0e10c-8b40-49bd-b6c4-1cb6e84194d2.gif?ClientID=vimeo-core-prod&Date=1675233373&Signature=4c66e31a67a47b9dd6766ab53ca785d3324bc961)](https://player.vimeo.com/video/794761825) -->
+
+<!-- ## Demo - Dark Mode
 
 [![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/d6ba00b4-8568-45bc-af72-52b96f581c95.gif?ClientID=vimeo-core-prod&Date=1675233322&Signature=a6aa1601e3bad43b28f5752c2bb8dbe7160dd019)](https://player.vimeo.com/video/794761764)
 
 ## Demo - Light Mode
 
-[![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/54942e32-b9e1-4044-bd61-f1e50c9f59cc.gif?ClientID=vimeo-core-prod&Date=1675233345&Signature=7b637ce8458ddaad88c87afb5a40c0bb4f7caa8c)](https://player.vimeo.com/video/794761800)
+[![Demo](https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/54942e32-b9e1-4044-bd61-f1e50c9f59cc.gif?ClientID=vimeo-core-prod&Date=1675233345&Signature=7b637ce8458ddaad88c87afb5a40c0bb4f7caa8c)](https://player.vimeo.com/video/794761800) -->
 
 
 ## Screenshots
